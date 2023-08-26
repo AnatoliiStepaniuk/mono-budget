@@ -1,3 +1,9 @@
+### What is this
+
+This is Telegram Bot that tracks your personal financial budget and sends you regular reports per category like the following:
+
+![demo](mono-budget-demo.jpg)
+
 ### Database
 
 The bot requires an SQL database to operate. Create a database using the `transactions.sql` script.
