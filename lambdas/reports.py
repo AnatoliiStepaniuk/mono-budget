@@ -39,7 +39,7 @@ def all_in_one_report_message_tabular(first_statistics, second_statistics, compa
     first_statistics = {k: -(v / 100) for k, v in first_statistics.items()}
     second_statistics = {k: -(v / 100) for k, v in second_statistics.items()}
 
-    with open('categories.json', 'r', encoding='utf-8') as file:
+    with open('json/categories.json', 'r', encoding='utf-8') as file:
         categories = json.load(file)
 
     total_budget = sum(item['budget'] for item in categories)

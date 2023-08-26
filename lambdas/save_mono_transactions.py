@@ -69,7 +69,30 @@ def save_transactions(transactions):
 
 
 def populate_categories(transactions):
-    # TODO implement
+
+    # Iterate through transactions and populate categories
+    for transaction in transactions:
+        print(f"Assigning category to transaction {transaction}")
+
+        # mcc-based rules
+        with open('mcc.json', 'r', encoding='utf-8') as file:
+            mcc_translations = json.load(file)
+        with open('json/mcc_translation_to_category.json', 'r', encoding='utf-8') as file:
+            translation_to_category = json.load(file)
+        translation = mcc_translations.get(str(transaction['mcc']), {}).get('uk')
+        if translation:
+            transaction['category'] = translation_to_category.get(translation)
+
+        # description based rules
+        with open('json/description_to_category.json', 'r', encoding='utf-8') as file:
+            description_to_category = json.load(file)
+        transaction["category"] = description_to_category.get(transaction["description"], transaction.get("category"))
+
+        if 'category' in transaction:
+            print(f"Set category {transaction['category']} found for {transaction}")
+        else:
+            print(f"Could not define category automatically for {transaction}")
+
     return transactions
 
 

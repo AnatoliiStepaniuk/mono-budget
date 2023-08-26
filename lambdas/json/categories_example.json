@@ -2,4 +2,4 @@
         {"category": "living", "emoji": "🏠", "translation": "Проживання", "budget":  12000},
         {"category": "food", "emoji": "🍗", "translation": "Харчування", "budget":  5000},
         {"category": "other", "emoji": "🤔", "translation": "Інше", "budget":  1000}
-    ]
+]

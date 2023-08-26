@@ -13,7 +13,13 @@ Note down the DbName, DbUser, DbPassword, DbHost and DbPort.
 
 ### Custom categories
 
-Create `categories.json` file in the `lambdas` folder (use `categories-example.json` as example).
+Create `categories.json` file in the `lambdas` folder (use `categories_example.json` as example).
+
+
+### Custom rules
+Create json files for custom rules using the corresponding examples:
+- `lambdas/json/description_to_category.json` - mapping of description to your categories
+- `lambdas/json/mcc_translation_to_category.json` - mapping of MCC translations to your categories
 
 
 ### Create TG bot

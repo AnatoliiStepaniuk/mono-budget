@@ -31,7 +31,7 @@ def get_mcc_ukr(mcc):
 
 def ask_category(transaction):
 
-    with open('categories.json', 'r', encoding='utf-8') as file:
+    with open('json/categories.json', 'r', encoding='utf-8') as file:
         categories = json.load(file)
 
     categories.append({'category': 'ignore', 'emoji': '🚫', 'translation': 'Ignore'})

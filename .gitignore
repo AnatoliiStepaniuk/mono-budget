@@ -1,5 +1,7 @@
 samconfig.toml
-lambdas/categories.json
+lambdas/json/categories.json
+lambdas/json/description_to_category.json
+lambdas/json/mcc_translation_to_category.json
 
 # Created by https://www.gitignore.io/api/osx,linux,python,windows,pycharm,visualstudiocode
 
