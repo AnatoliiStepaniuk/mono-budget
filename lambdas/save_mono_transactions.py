@@ -97,11 +97,11 @@ def populate_categories(transactions):
 
 
 def save_previous_transactions_handler(event, context):
-    now = datetime.utcnow()  # Current timestamp
-    start = now - timedelta(days=14)
+    end = datetime.utcnow()  # Current timestamp
+    start = end - timedelta(days=30)
 
     start_in_seconds = calendar.timegm(start.utctimetuple())
-    end_in_seconds = calendar.timegm(now.utctimetuple())
+    end_in_seconds = calendar.timegm(end.utctimetuple())
 
     transactions = get_mono_transactions(start_in_seconds, end_in_seconds)
     populate_categories(transactions)

@@ -90,6 +90,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: rate(24 hours)
+#            Schedule: rate(1 minute)
   MonoWebhookFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
