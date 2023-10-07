@@ -34,5 +34,23 @@ def send_tg_message_with_inline_keyboard(chat_id, message, inline_keyboard):
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
-    if response.status_code != 200:
-        print(response.text)
+    if response.status_code == 200:
+        data = response.json()
+        return data["result"]["message_id"]
+    else:
+        raise Exception(f'Unsuccessful response from TG: {response.text}')
+
+
+def delete_message(chat_id, message_id):
+
+    url = f"https://api.telegram.org/bot{os.environ.get('TG_BOT_API_KEY')}/deleteMessage"
+
+    payload = json.dumps({
+        "chat_id": chat_id,
+        "message_id": message_id
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    requests.request("POST", url, headers=headers, data=payload)

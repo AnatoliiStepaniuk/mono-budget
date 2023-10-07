@@ -64,8 +64,32 @@ Resources:
         Timer:
           Type: Schedule
           Properties:
-            Schedule: rate(24 hours)
+            Schedule: rate(12 hours)
 #            Schedule: rate(1 minute)
+  AutoSetCategoriesFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: lambdas/
+      Handler: auto_set_categories.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          MY_CHAT_ID: !Ref MyChatId
+          TG_BOT_API_KEY: !Ref TgBotApiKey
+          DB_NAME: !Ref DbName
+          DB_USER: !Ref DbUser
+          DB_PASSWORD: !Ref DbPassword
+          DB_HOST: !Ref DbHost
+          DB_PORT: !Ref DbPort
+          MONO_API_KEY: !Ref MonoApiKey
+          MONO_ACCOUNT_ID: !Ref MonoAccountId
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 hour)
   SaveMonoPreviousTransactionsFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
