@@ -40,8 +40,6 @@ def set_categories_last_28_days():
 
 
 def auto_set_category_if_needed(transaction):
-    if non_empty_category(transaction):
-        return
 
     current_time_in_seconds = int(time.time())
     # too early. give user time to specify the transaction manually
@@ -53,7 +51,6 @@ def auto_set_category_if_needed(transaction):
     if non_empty_category(transaction):
         set_field(transaction['time'], 'category', transaction['category'])
         delete_all_messages(transaction)
-
 
 
 def non_empty_category(transaction):
