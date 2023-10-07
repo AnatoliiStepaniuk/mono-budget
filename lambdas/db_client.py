@@ -12,10 +12,15 @@ def db_connection_string():
 
 
 def get_transactions_in_range(from_seconds, to_seconds):
+    return get_transactions_in_range_with_condition('1 = 1', from_seconds, to_seconds)
+
+
+def get_transactions_in_range_with_condition(condition, from_seconds, to_seconds):
 
     """
     Fetch transactions from the SQL database within a specified time range.
 
+    :param condition: additional sql condition (d.g. category is null)
     :param from_seconds: Starting time (inclusive)
     :param to_seconds: Ending time (inclusive)
     :return: List of transactions
@@ -25,10 +30,10 @@ def get_transactions_in_range(from_seconds, to_seconds):
     conn = psycopg2.connect(db_connection_string())
     cursor = conn.cursor()
 
-    query = """
-        SELECT time, mcc, description, amount, category, category_last_asked_seconds, comment 
+    query = f"""
+        SELECT time, mcc, description, amount, category, message_ids, category_last_asked_seconds, comment 
         FROM transactions
-        WHERE time BETWEEN %s AND %s;
+        WHERE {condition} AND time BETWEEN %s AND %s;
     """
 
     cursor.execute(query, (from_seconds, to_seconds))
@@ -41,14 +46,15 @@ def get_transactions_in_range(from_seconds, to_seconds):
             'mcc': record[1],
             'description': record[2],
             'amount': record[3],
-            'category': record[4]
+            'category': record[4],
+            'message_ids': record[5]
         }
 
-        if record[5] is not None:
-            transaction['category_last_asked_seconds'] = record[5]
-
         if record[6] is not None:
-            transaction['comment'] = record[6]
+            transaction['category_last_asked_seconds'] = record[6]
+
+        if record[7] is not None:
+            transaction['comment'] = record[7]
 
         transactions.append(transaction)
 
@@ -58,8 +64,55 @@ def get_transactions_in_range(from_seconds, to_seconds):
 
     return transactions
 
+def get_transaction(time):
 
-def add_field(id, key, value):
+    """
+    Fetch transactions from the SQL database within a specified time range.
+
+    :param time: timestamp of transaction in seconds (transaction identifier)
+    :return: Transaction found for the timestamp
+    """
+
+    # Connect to the SQL database
+    conn = psycopg2.connect(db_connection_string())
+    cursor = conn.cursor()
+
+    query = """
+        SELECT time, mcc, description, amount, category, message_ids, category_last_asked_seconds, comment 
+        FROM transactions
+        WHERE time = %s
+    """
+
+    cursor.execute(query, (time,))
+    record = cursor.fetchone()
+
+    # If no record is found, return None
+    if not record:
+        return None
+
+    transaction = {
+        'time': record[0],
+        'mcc': record[1],
+        'description': record[2],
+        'amount': record[3],
+        'category': record[4],
+        'message_ids': record[5]
+    }
+
+    if record[6] is not None:
+        transaction['category_last_asked_seconds'] = record[6]
+
+    if record[7] is not None:
+        transaction['comment'] = record[7]
+
+    # Close connections
+    cursor.close()
+    conn.close()
+
+    return transaction
+
+
+def set_field(id, key, value):
 
     """
     Update a specific field in the transactions table for a given record (identified by time).

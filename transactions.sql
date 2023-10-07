@@ -5,5 +5,6 @@ CREATE TABLE monobudget.transactions (
     amount INT,
     category TEXT,
     category_last_asked_seconds BIGINT,
-    comment TEXT
+    comment TEXT,
+    message_ids TEXT
 );

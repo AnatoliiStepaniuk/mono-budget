@@ -68,34 +68,6 @@ def save_transactions(transactions):
     conn.close()
 
 
-def populate_categories(transactions):
-
-    # Iterate through transactions and populate categories
-    for transaction in transactions:
-        print(f"Assigning category to transaction {transaction}")
-
-        # mcc-based rules
-        with open('mcc.json', 'r', encoding='utf-8') as file:
-            mcc_translations = json.load(file)
-        with open('json/mcc_translation_to_category.json', 'r', encoding='utf-8') as file:
-            translation_to_category = json.load(file)
-        translation = mcc_translations.get(str(transaction['mcc']), {}).get('uk')
-        if translation:
-            transaction['category'] = translation_to_category.get(translation)
-
-        # description based rules
-        with open('json/description_to_category.json', 'r', encoding='utf-8') as file:
-            description_to_category = json.load(file)
-        transaction["category"] = description_to_category.get(transaction["description"], transaction.get("category"))
-
-        if 'category' in transaction:
-            print(f"Set category {transaction['category']} found for {transaction}")
-        else:
-            print(f"Could not define category automatically for {transaction}")
-
-    return transactions
-
-
 def save_previous_transactions_handler(event, context):
     end = datetime.utcnow()  # Current timestamp
     start = end - timedelta(days=30)
@@ -104,7 +76,6 @@ def save_previous_transactions_handler(event, context):
     end_in_seconds = calendar.timegm(end.utctimetuple())
 
     transactions = get_mono_transactions(start_in_seconds, end_in_seconds)
-    populate_categories(transactions)
     save_transactions(transactions)
 
     return {
@@ -126,7 +97,6 @@ def save_current_transaction_handler(event, context):
                     'amount': body['data']['statementItem']['amount']
                 }
 
-                populate_categories([transaction])
                 save_transactions([transaction])
                 ask_category_if_needed(transaction)
         else:
