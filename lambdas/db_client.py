@@ -41,22 +41,7 @@ def get_transactions_in_range_with_condition(condition, from_seconds, to_seconds
 
     transactions = []
     for record in records:
-        transaction = {
-            'time': record[0],
-            'mcc': record[1],
-            'description': record[2],
-            'amount': record[3],
-            'category': record[4],
-            'message_ids': record[5]
-        }
-
-        if record[6] is not None:
-            transaction['category_last_asked_seconds'] = record[6]
-
-        if record[7] is not None:
-            transaction['comment'] = record[7]
-
-        transactions.append(transaction)
+        transactions.append(record_to_transaction(record))
 
     # Close connections
     cursor.close()
@@ -90,6 +75,22 @@ def get_transaction(time):
     if not record:
         return None
 
+    transaction = record_to_transaction(record)
+
+    # Close connections
+    cursor.close()
+    conn.close()
+
+    return transaction
+
+
+def record_to_transaction(record):
+    """
+    Convert a database record into a transaction dictionary.
+
+    :param record: The record fetched from the database
+    :return: A dictionary representing the transaction
+    """
     transaction = {
         'time': record[0],
         'mcc': record[1],
@@ -104,10 +105,6 @@ def get_transaction(time):
 
     if record[7] is not None:
         transaction['comment'] = record[7]
-
-    # Close connections
-    cursor.close()
-    conn.close()
 
     return transaction
 
