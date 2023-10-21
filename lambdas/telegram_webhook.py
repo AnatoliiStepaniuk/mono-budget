@@ -1,7 +1,8 @@
 import json
+import os
 from db_client import set_field, get_transaction
 from intro_flow import greet, show_report_example, show_custom_categories_example, show_cash_no_cash_message, show_developer_contact
-from auto_set_categories import delete_all_messages
+from auto_set_categories import delete_all_messages, delete_message
 
 def save_category(id, category):
     set_field(id, 'category', category)
@@ -16,7 +17,12 @@ def handle_set_category(request):
         save_category(id, category)
 
     transaction = get_transaction(id)
-    delete_all_messages(transaction)
+    if not transaction.get('message_ids'):
+        message_id = request['callback_query']['message']['message_id']
+        my_chat_id = os.environ.get('MY_CHAT_ID')
+        delete_message(my_chat_id, message_id)
+    else:
+        delete_all_messages(transaction)
 
 
 def lambda_handler(event, context):
@@ -36,6 +42,7 @@ def lambda_handler(event, context):
     if 'callback_query' in request and 'data' in request['callback_query']:
         chat_id = request['callback_query']['from']['id']
         if request['callback_query']['data'].startswith("setCategory"):
+            print(f"[{chat_id}] Flow: setCategory ")
             handle_set_category(request)
         if request['callback_query']['data'] == "show_report_example":
             print(f"[{chat_id}] Flow: show_report_example ")

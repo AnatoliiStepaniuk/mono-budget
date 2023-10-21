@@ -53,4 +53,12 @@ def delete_message(chat_id, message_id):
         'Content-Type': 'application/json'
     }
 
-    requests.request("POST", url, headers=headers, data=payload)
+    response = requests.request("POST", url, headers=headers, data=payload)
+
+    if not (200 <= response.status_code < 300):
+        print(f"Failed to delete message. Status: {response.status_code}. Response: {response.text}")
+        if "Bad Request: message can't be deleted for everyone" in response.text:
+            send_tg_message(chat_id, "Message is too old to be deleted by bot. Please delete it manually.")
+
+
+

@@ -8,7 +8,7 @@ from db_client import set_field, get_transactions_in_range_with_condition
 
 def mark_trasaction_ask_asked(transaction, message_id):
     set_field(transaction['time'], 'category_last_asked_seconds', int(time.time()))
-    if not transaction['message_ids']:
+    if not transaction.get('message_ids'):
         message_ids = str(message_id)
     else:
         message_ids = transaction['message_ids'] + f",{message_id}"
