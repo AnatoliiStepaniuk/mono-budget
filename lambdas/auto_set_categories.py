@@ -9,7 +9,7 @@ def populate_category(transaction):
     print(f"Assigning category to transaction {transaction}")
 
     # mcc-based rules
-    with open('mcc.json', 'r', encoding='utf-8') as file:
+    with open('json/mcc.json', 'r', encoding='utf-8') as file:
         mcc_translations = json.load(file)
     with open('json/mcc_translation_to_category.json', 'r', encoding='utf-8') as file:
         translation_to_category = json.load(file)

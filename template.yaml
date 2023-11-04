@@ -1,16 +1,12 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: >
+Description: |
   mono_budget_ask_categories
-
   Sample SAM Template for mono_budget_ask_categories
-
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 10
     MemorySize: 128
-
 Parameters:
   MyChatId:
     Type: String
@@ -39,10 +35,9 @@ Parameters:
   MonoAccountId:
     Type: String
     Description: Mono Account Id to track
-
 Resources:
   AskCategoriesFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambdas/
       Handler: ask_categories.lambda_handler
@@ -65,9 +60,8 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: rate(12 hours)
-#            Schedule: rate(1 minute)
   AutoSetCategoriesFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambdas/
       Handler: auto_set_categories.lambda_handler
@@ -90,8 +84,45 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: rate(1 hour)
+  PeriodicErrorNotificationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambdas/
+      Handler: periodic_error_notification.lambda_handler
+      Runtime: python3.9
+      Architectures:
+        - x86_64
+      Policies:
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - logs:FilterLogEvents
+                - logs:StartQuery
+                - logs:GetQueryResults
+              Resource: arn:aws:logs:eu-central-1:910504642219:log-group:/aws/lambda/*:*
+            - Effect: Allow
+              Action:
+                - logs:DescribeLogGroups
+              Resource: '*'
+      Environment:
+        Variables:
+          MY_CHAT_ID: !Ref MyChatId
+          TG_BOT_API_KEY: !Ref TgBotApiKey
+          DB_NAME: !Ref DbName
+          DB_USER: !Ref DbUser
+          DB_PASSWORD: !Ref DbPassword
+          DB_HOST: !Ref DbHost
+          DB_PORT: !Ref DbPort
+          MONO_API_KEY: !Ref MonoApiKey
+          MONO_ACCOUNT_ID: !Ref MonoAccountId
+      Events:
+        Timer:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 hour)
   SaveMonoPreviousTransactionsFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambdas/
       Handler: save_mono_transactions.save_previous_transactions_handler
@@ -114,9 +145,8 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: rate(24 hours)
-#            Schedule: rate(1 minute)
   MonoWebhookFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambdas/
       Handler: save_mono_transactions.save_current_transaction_handler
@@ -136,17 +166,17 @@ Resources:
           MONO_ACCOUNT_ID: !Ref MonoAccountId
       Events:
         MonoWebhook:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /mono_webhook
             Method: post
         MonoWebhookTest:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /mono_webhook
             Method: get
   AllInOneReportFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambdas/
       Handler: reports.all_in_one_report_lambda_handler
@@ -168,10 +198,9 @@ Resources:
         Timer:
           Type: Schedule
           Properties:
-            Schedule: cron(0 0 * * ? *) # every midnight UTC
-#            Schedule: rate(1 minute)
+            Schedule: cron(0 0 * * ? *)
   TelegramWebhookFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: lambdas/
       Handler: telegram_webhook.lambda_handler
@@ -191,18 +220,14 @@ Resources:
           MONO_ACCOUNT_ID: !Ref MonoAccountId
       Events:
         TelegramResponse:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /telegram_webhook
             Method: post
-
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   SaveCustomCategoryApi:
-    Description: "API Gateway endpoint URL for Prod stage for Save Custom Category function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/telegram_webhook"
+    Description: API Gateway endpoint URL for Prod stage for Save Custom Category function
+    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/telegram_webhook
   MonoWebhookApi:
-    Description: "API Gateway endpoint URL for Prod stage for Save Custom Category function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/mono_webhook"
+    Description: API Gateway endpoint URL for Prod stage for Save Custom Category function
+    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/mono_webhook

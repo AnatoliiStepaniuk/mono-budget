@@ -15,7 +15,12 @@ def send_tg_message(chat_id, message):
         'Content-Type': 'application/json'
     }
 
-    requests.request("POST", url, headers=headers, data=payload)
+    response = requests.request("POST", url, headers=headers, data=payload)
+    if response.status_code == 200:
+        data = response.json()
+        return data["result"]["message_id"]
+    else:
+        raise Exception(f'Unsuccessful response from TG: {response.text}')
 
 
 def send_tg_message_with_inline_keyboard(chat_id, message, inline_keyboard):

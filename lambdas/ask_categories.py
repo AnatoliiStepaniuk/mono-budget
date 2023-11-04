@@ -24,7 +24,7 @@ def to_kyiv_pretty_time(transaction):
 
 
 def get_mcc_ukr(mcc):
-    with open('mcc.json', 'r') as file:
+    with open('json/mcc.json', 'r') as file:
         data = json.load(file)
 
     # Check if the mcc key exists in the JSON data

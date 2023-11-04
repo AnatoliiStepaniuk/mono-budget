@@ -1,3 +1,4 @@
 pytz
 psycopg2-binary==2.9.7
-requests
+requests==2.25.0
+urllib3<2
