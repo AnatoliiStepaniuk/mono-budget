@@ -60,6 +60,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: rate(12 hours)
+            Name: AskCategoriesTimer
   AutoSetCategoriesFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -84,6 +85,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: rate(1 hour)
+            Name: AutoSetCategoriesTimer
   PeriodicErrorNotificationFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -121,6 +123,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: rate(1 hour)
+            Name: PeriodicErrorNotificationsTimer
   SaveMonoPreviousTransactionsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -145,6 +148,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: rate(24 hours)
+            Name: SaveMonoPreviousTransactionsTimer
   MonoWebhookFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -199,6 +203,7 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: cron(0 0 * * ? *)
+            Name: BudgetReportTimer
   TelegramWebhookFunction:
     Type: AWS::Serverless::Function
     Properties:
