@@ -56,7 +56,7 @@ def lambda_handler(event, context):
         if request['callback_query']['data'] == "show_developer_contact":
             print(f"[{chat_id}] Flow: show_developer_contact ")
             show_developer_contact(chat_id)
-    else:
+    elif 'message' in request:
         chat_id = request['message']['from']['id']
         print(f"[{chat_id}] Flow: greeting ")
         greet(chat_id)

@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: |
-  mono_budget_ask_categories
-  Sample SAM Template for mono_budget_ask_categories
+  mono_budget
+  Sample SAM Template for mono_budget
 Globals:
   Function:
     Timeout: 10
@@ -59,7 +59,7 @@ Resources:
         Timer:
           Type: Schedule
           Properties:
-            Schedule: rate(12 hours)
+            Schedule: rate(3 hours)
             Name: AskCategoriesTimer
   AutoSetCategoriesFunction:
     Type: AWS::Serverless::Function
@@ -119,7 +119,7 @@ Resources:
           MONO_API_KEY: !Ref MonoApiKey
           MONO_ACCOUNT_ID: !Ref MonoAccountId
       Events:
-        Timer:
+        ImplicitTimer3:
           Type: Schedule
           Properties:
             Schedule: rate(1 hour)

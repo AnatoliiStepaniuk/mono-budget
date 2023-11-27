@@ -52,7 +52,7 @@ After this run the following command to deploy the bot:
 You will receive the Mono and TG webhook URLs in the output:
 ```commandline
 https://XXXXXXXXXX.execute-api.eu-central-1.amazonaws.com/Prod/mono_webhook 
-https://XXXXXXXXXX.execute-api.eu-central-1.amazonaws.com/Prod/telegram_webhoo
+https://XXXXXXXXXX.execute-api.eu-central-1.amazonaws.com/Prod/telegram_webhook
 ```
 
 

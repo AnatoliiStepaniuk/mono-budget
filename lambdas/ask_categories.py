@@ -87,10 +87,10 @@ def ask_category_if_needed(transaction):
         return
 
     current_time = int(time.time())
-    one_day_seconds = 24 * 60 * 60
+    ask_categories_timeout = 5 * 60 * 60
 
     if 'category_last_asked_seconds' not in transaction \
-            or (current_time - transaction['category_last_asked_seconds']) > one_day_seconds:
+            or (current_time - transaction['category_last_asked_seconds']) > ask_categories_timeout:
         print("Asking category for transaction ", transaction)
         message_id = ask_category(transaction)
         mark_trasaction_ask_asked(transaction, message_id)
