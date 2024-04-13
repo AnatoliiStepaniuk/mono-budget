@@ -1,5 +1,6 @@
 import os
 import json
+import requests
 from datetime import datetime
 
 import time
@@ -69,14 +70,23 @@ def all_in_one_report_message_tabular(first_statistics, second_statistics, compa
         result_strings.append(f"{translated_category}: {first_emoji_and_value:<7}| {second_emoji_and_value:<7}| {int(benchmark_value):<7}")
 
     result_strings.append("------------------------------")
-    first_dollars = f"${int(first_statistics['total']/36.65)}"
-    second_dollars = f"${int(second_statistics['total']/36.65)}"
-    budget_dollars = f"${int(budget_per_category.get('total', 0)/36.65)}"
+    usd_rate = get_usd_to_uah_rate()
+
+    first_dollars = f"${int(first_statistics['total']/usd_rate)}"
+    second_dollars = f"${int(second_statistics['total']/usd_rate)}"
+    budget_dollars = f"${int(budget_per_category.get('total', 0)/usd_rate)}"
     result_strings.append(f"💵: {first_dollars:>8}| {second_dollars:>8}| {budget_dollars:>5}")
 
     result_strings.append("```")
 
     return '\n'.join(result_strings)
+
+
+def get_usd_to_uah_rate():
+    url = 'https://v6.exchangerate-api.com/v6/866f7761e025a0fe95bffdd9/latest/USD'
+    response = requests.get(url)
+    data = response.json()
+    return data['conversion_rates']['UAH']
 
 
 def get_emoji_for_value(value, benchmark_value):
