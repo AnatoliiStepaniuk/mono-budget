@@ -12,31 +12,26 @@ from db_client import get_transactions_in_range, get_smallest_time
 def get_sums_per_category(from_seconds, to_seconds):
     transactions = get_transactions_in_range(from_seconds, to_seconds)
 
-    sums_per_category = {}
+    sums_per_category: dict[str, int] = {}
+    EXCLUDED_FROM_TOTAL = {'donate', 'business', 'home-renovation', 'home-renovation-2', ''}
 
     for transaction in transactions:
-        if 'category' not in transaction:
+        category = transaction.get('category')
+        if not category or category == 'ignore':
             continue
 
-        category = transaction['category']
-
-        if category == 'ignore' or category == '':
-            continue
-
-        if category not in sums_per_category:
-            sums_per_category[category] = 0
-
+        sums_per_category.setdefault(category, 0)
         sums_per_category[category] += transaction['amount']
 
-    # Compute the total sum
-    total_sum = sum(sums_per_category.values())
-    sums_per_category['total'] = total_sum
-
+    sums_per_category['total'] = sum(
+        value
+        for key, value in sums_per_category.items()
+        if key not in EXCLUDED_FROM_TOTAL
+    )
     return sums_per_category
 
 
 def all_in_one_report_message_tabular(first_statistics, second_statistics, comparison_name):
-
     first_statistics = {k: -(v / 100) for k, v in first_statistics.items()}
     second_statistics = {k: -(v / 100) for k, v in second_statistics.items()}
 
