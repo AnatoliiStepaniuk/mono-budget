@@ -103,6 +103,7 @@ def lambda_handler(event, context):
     query = """
     fields @timestamp, @message
     | filter @message like /ERROR|Error|error|Fail|fail|FAIL/
+    | filter @message not like 'Failed to delete message. Status: 400. Response: {"ok":false,"error_code":400,"description":"Bad Request: message to delete not found"}'
     | sort @timestamp desc
     | limit 100
     """
