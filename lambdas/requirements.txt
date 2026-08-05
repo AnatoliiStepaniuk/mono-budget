@@ -2,3 +2,5 @@ pytz
 psycopg2-binary==2.9.7
 requests==2.25.0
 urllib3<2
+aws-lambda-powertools
+pydantic

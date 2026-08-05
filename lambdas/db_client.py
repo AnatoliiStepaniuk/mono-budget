@@ -11,8 +11,19 @@ def db_connection_string():
     return f"dbname={dbname} user={user} password={password} host={host} port={port}"
 
 
-def get_transactions_in_range(from_seconds, to_seconds):
-    return get_transactions_in_range_with_condition('1 = 1', from_seconds, to_seconds)
+def get_transactions_in_range(from_seconds, to_seconds, categories=None):
+    return get_transactions_in_range_with_condition(categories_sql_condition(categories), from_seconds, to_seconds)
+
+
+def categories_sql_condition(categories):
+    condition = '1 = 1'  # Default condition
+
+    if categories and isinstance(categories, list) and len(categories) > 0:
+        # Safely format category strings for SQL query
+        formatted_categories = ', '.join("'" + str(category).replace("'", "''") + "'" for category in categories)
+        condition = f"category IN ({formatted_categories})"
+
+    return condition
 
 
 def get_transactions_in_range_with_condition(condition, from_seconds, to_seconds):

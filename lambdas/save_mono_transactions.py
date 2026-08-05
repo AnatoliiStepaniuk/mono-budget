@@ -12,6 +12,7 @@ def get_mono_transactions(from_secs, to_secs):
         'X-Token': os.environ.get('MONO_API_KEY')
     }
     account = os.environ.get('MONO_ACCOUNT_ID')
+    # TODO potentially can hit the 500 limit!!!
     response = requests.get(f"https://api.monobank.ua/personal/statement/{account}/{from_secs}/{to_secs}", headers=headers)
     if 200 <= response.status_code < 300:
         return response.json()
@@ -68,7 +69,7 @@ def save_transactions(transactions):
     conn.close()
 
 
-def save_previous_transactions_handler(event, context):
+def save_previous_transactions_handler(event, context): # TODO can remember the latest time it fetched from Monobank to fetch less than 28 last days
     end = datetime.utcnow()  # Current timestamp
     start = end - timedelta(days=30)
 
